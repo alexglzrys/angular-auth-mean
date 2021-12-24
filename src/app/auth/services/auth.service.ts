@@ -54,7 +54,7 @@ export class AuthService {
   }
 
   // Validar y renovar token
-  validateToken(): Observable<AuthResponse> {
+  validateToken(): Observable<boolean> {
     // construir URL para enviar la petición HTTP
     const URL = `${this.baseUrl}/auth/renew`;
     // construir la cabeceras necesarias para enviar en nuestra petición
@@ -62,6 +62,25 @@ export class AuthService {
     // El token se recupera del LocalStorage. Sin embargo puede ser nulo, para ello envimos una cadena vacía
     const headers = new HttpHeaders().set('x-token', localStorage.getItem('token-mean') || '');
 
-    return this.http.get<AuthResponse>(URL, {headers});
+    // El guard que llamará a este servicio, solo espera un Observable de tipo boolean
+    return this.http.get<AuthResponse>(URL, {headers})
+      .pipe(
+        map(resp => {
+          // En este punto la respuesta es TRUE, ya si fuera FALSE, el server envía un status 401,
+          // por tanto ese es un error, y el operador catchError lo atraparía
+
+          // Guardar el nuevo token en LocalStorage
+          localStorage.setItem('mean-token', resp.token!);
+          // Volver a guardar los datos del usuario en la variable de ayuda temporal de este servicio
+          this._user = {
+            name: resp.name!, // Como estas propiedades en la interfaz son opcionales, es importante decirle a TS que confie en nosotros (!), ya que en este punto si existe un valor
+            uid: resp.uid!
+          };
+
+          return resp.ok;
+        }),
+        // Si el server lanza un error (de la serie 400 | 500) debemos atraparlo
+        catchError(err => of(false))
+      );
   }
 }
