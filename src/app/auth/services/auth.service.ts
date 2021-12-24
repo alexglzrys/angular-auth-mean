@@ -22,13 +22,13 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   // Servicicio para login
-  login(email: string, password: string): Observable<boolean>  {
+  login(email: string, password: string): Observable<boolean | string>  {
     // Construir la URL de la petición
     const URL = `${this.baseUrl}/auth`;
     // Construir el cuerpo de la petición
     const body = { email, password };
 
-    // Al final me interesa enviar un booleano como respuesta
+    // Al final me interesa enviar un booleano o un string como respuesta
     return this.http.post<AuthResponse>(URL, body)
     .pipe(
       // Realizar previamente una acción secundaria con base a la respuesta del servidor
@@ -43,7 +43,10 @@ export class AuthService {
         }
       }),
       map(res => res.ok), // Retorna el valor booleano como un observable
-      catchError(err => of(false))  // Atrapa cualquier error (400 | 500) generado en el server, y transformamos esa respuesta como un observable boolenado = false
+      catchError(err => {
+        console.log(err);
+        return of(err.error.msg)
+      })  // Atrapa cualquier error (400 | 500) generado en el server, y transformamos esa respuesta como un observable, mandando el mensaje con el error
     );
   }
 }
