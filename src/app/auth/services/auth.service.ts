@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -35,7 +35,10 @@ export class AuthService {
       tap(resp => {
         //console.log(resp)
         if (resp.ok) {
-          // Si la petición es correcta, conservar la información del usuario en nuestra variable de ayuda privada
+          // La petición es correcta en este punto, se procede a guardar el token enviado por el server en LocalStorage, para futuras validaciones y renovaciones
+          localStorage.setItem('token-mean', resp.token!);
+
+          // La petición es correcta en este punto, conservar la información del usuario logeado en nuestra variable de ayuda privada
           this._user = {
             uid: resp.uid!,
             name: resp.name!
@@ -48,5 +51,17 @@ export class AuthService {
         return of(err.error.msg)
       })  // Atrapa cualquier error (400 | 500) generado en el server, y transformamos esa respuesta como un observable, mandando el mensaje con el error
     );
+  }
+
+  // Validar y renovar token
+  validateToken(): Observable<AuthResponse> {
+    // construir URL para enviar la petición HTTP
+    const URL = `${this.baseUrl}/auth/renew`;
+    // construir la cabeceras necesarias para enviar en nuestra petición
+    // Para validar y renovar el token, el backend espera un custom header llamado "x-token" cuyo valor es el token a validar
+    // El token se recupera del LocalStorage. Sin embargo puede ser nulo, para ello envimos una cadena vacía
+    const headers = new HttpHeaders().set('x-token', localStorage.getItem('token-mean') || '');
+
+    return this.http.get<AuthResponse>(URL, {headers});
   }
 }

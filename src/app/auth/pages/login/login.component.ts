@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       }
     })
 
-
+    //this.authServices.validateToken().subscribe(res => console.log(res) );
   }
 
 }
