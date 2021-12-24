@@ -33,13 +33,16 @@ export class LoginComponent implements OnInit {
     // Recuperar la información almacenada en los campos del formulario reactivo
     const { email, password } = this.miFormulario.value;
 
-    // Llamar al servicio de login
-    this.authServices.login(email, password).subscribe(res => {
-      console.log(res);
+    // Llamar al servicio de login (este me retorna un booleano)
+    this.authServices.login(email, password).subscribe(valido => {
+      // console.log(valido);
+      if (valido) {
+        // Redireccionar el usuario a Dashboard
+        this.router.navigateByUrl('/dashboard');
+      }
     })
 
-    // Redireccionar el usuario a Dashboard
-    this.router.navigateByUrl('/dashboard');
+
   }
 
 }

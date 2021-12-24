@@ -2,5 +2,5 @@
 <hr>
 <p>Esta página solo es accesible si el usuario se encuentra autenticado.</p>
 <h4>Información del usuario</h4>
-<pre>...</pre>
+<pre>{{ usuario | json }}</pre>
 <button type="button" (click)="logout()">Logout</button>
