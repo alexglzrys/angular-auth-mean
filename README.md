@@ -25,3 +25,17 @@ imports: [RouterModule.forRoot(routes, {
 ``` 
 - El único inconveniente es que la URL tendrá un # (hash) después del dominio del servidor, lo que la hace ver un poco fea
 - La ventaja es que nuestra SPA podrá ser desplegada en la mayoría de los navegadores modernos y antigüos como IE. 
+
+- **Solución 2**
+- Realizar las configuraciones necesarias en el Backend, sin alterar las configuraciones por defecto que tiene el router de Angular
+```
+  imports: [RouterModule.forRoot(routes)]
+```
+- En servidores Apache, esta configuración se realiza en el .htaccess
+- En Frameworks como ExpressJS, CodeIgniter, Laravel, se puede realizar en el sistema de rutas (al final)
+```
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/index.html'));
+})
+```
+- De esta forma, le indicamos que para cualquier otra ruta, se sirva el archivo index.html de Angular. Lo que permite que el router del mismo tenga el control absoluto de sus rutas registradas
