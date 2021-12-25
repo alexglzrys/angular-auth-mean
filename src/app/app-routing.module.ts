@@ -21,7 +21,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  // Para servir la app de Angular en el mismo server del Backend, tenemos que realizar una configuración adicional al sistema de rutas
+  // useHash: perimite que nuestra SPA sea compatible con cualquier navegador viejo, sin que tengamos que realizar una configuración adicional en el servidor, para que el sistema de rutas de Angular no entre en conflicto con el sistema de rutas del backend
+  imports: [RouterModule.forRoot(routes, {
+    useHash: true,
+  })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
