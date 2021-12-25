@@ -92,3 +92,15 @@ $ git push heroku main
 - Generar un Build de tipo producción de nuestra App
 - Copiar y pegar el contenido del directorio dist/nombreApp al directorio de archivos públicos de nuestro backend
 - Realizar todos los pasos descritos en el **Caso 1**
+
+### Revisar logs de Heroku
+
+Si por alguna razón deseamos obtener todos los logs que ocurren al momento de ejecutar nuestra aplicación en Heroku, solo tenemos que lanzar el siguiente comando en nuestra terminal
+```
+heroku logs -n 1000 --tail -a=nombre_app_a_inspeccionar_en_heroku
+``` 
+Lo anterior nos puede servir para
+- Ver todos los logs generados desde el primer momento de que fue lanzada nuestra app
+- Revisar por que falla algo que si funciona en local (console.log())
+- Ver a que puertos se esta conectando nuestra app en producción
+- **-n ### indica el número máximo de lineas de log que queremos recuperar**
