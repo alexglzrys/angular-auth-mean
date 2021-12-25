@@ -70,7 +70,7 @@ export class AuthService {
           // por tanto ese es un error, y el operador catchError lo atraparía
 
           // Guardar el nuevo token en LocalStorage
-          localStorage.setItem('mean-token', resp.token!);
+          localStorage.setItem('token-mean', resp.token!);
           // Volver a guardar los datos del usuario en la variable de ayuda temporal de este servicio
           this._user = {
             name: resp.name!, // Como estas propiedades en la interfaz son opcionales, es importante decirle a TS que confie en nosotros (!), ya que en este punto si existe un valor
@@ -82,5 +82,11 @@ export class AuthService {
         // Si el server lanza un error (de la serie 400 | 500) debemos atraparlo
         catchError(err => of(false))
       );
+  }
+
+  // Cerrar sesión del usuarii
+  logout() {
+    // Solo borro toda la información del localStorage correspondiente a la URl de nuestra app
+    localStorage.clear();
   }
 }

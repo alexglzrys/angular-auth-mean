@@ -47,6 +47,8 @@ export class DashboardComponent implements OnInit {
   }
 
   logout() {
+    // Borrar el token del LocalStorage
+    this.authService.logout();
     // Redireccionar al usuario al login
     this.router.navigateByUrl('/login');
   }
