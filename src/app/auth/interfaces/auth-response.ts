@@ -3,5 +3,6 @@ export interface AuthResponse {
   uid?: string;
   msg?: string;
   name?: string;
+  email?: string;
   token?: string;
 }

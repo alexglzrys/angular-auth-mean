@@ -37,12 +37,6 @@ export class AuthService {
         if (resp.ok) {
           // La petición es correcta en este punto, se procede a guardar el token enviado por el server en LocalStorage, para futuras validaciones y renovaciones
           localStorage.setItem('token-mean', resp.token!);
-
-          // La petición es correcta en este punto, conservar la información del usuario logeado en nuestra variable de ayuda privada
-          this._user = {
-            uid: resp.uid!,
-            name: resp.name!
-          };
         }
       }),
       map(res => res.ok), // Retorna el valor booleano como un observable
@@ -71,12 +65,13 @@ export class AuthService {
 
           // Guardar el nuevo token en LocalStorage
           localStorage.setItem('token-mean', resp.token!);
-          // Volver a guardar los datos del usuario en la variable de ayuda temporal de este servicio
+          // La petición es correcta en este punto, conservar la información del usuario logeado en nuestra variable de ayuda privada
           this._user = {
             name: resp.name!, // Como estas propiedades en la interfaz son opcionales, es importante decirle a TS que confie en nosotros (!), ya que en este punto si existe un valor
-            uid: resp.uid!
+            uid: resp.uid!,
+            email: resp.email!
           };
-
+          console.log(this._user);
           return resp.ok;
         }),
         // Si el server lanza un error (de la serie 400 | 500) debemos atraparlo
@@ -88,5 +83,29 @@ export class AuthService {
   logout() {
     // Solo borro toda la información del localStorage correspondiente a la URl de nuestra app
     localStorage.clear();
+  }
+
+  register(name: string, email: string, password: string): Observable<boolean | string> {
+    // Generar URL para petición HTTP
+    const URL = `${this.baseUrl}/auth/new`;
+    // Construir cuerpo de la petición
+    const body = { name, email, password }
+
+    // Enviar la petición al servidor
+    return this.http.post<AuthResponse>(URL, body)
+      .pipe(
+        // Hacer tarea secundaria
+        tap(resp => {
+          if (resp.ok) {
+            // En este punto, el usuario se registró correctamente
+            // Almacenar el token en LocalStorage
+            localStorage.setItem('token-mean', resp.token!);
+          }
+        }),
+        // Transformar la respuesta en un boolean
+        map(resp => resp.ok),
+        // Atrapar cualquier error (400 | 500), y enviar el mensaje de error como respuesta a través de un Observable de tipo string
+        catchError(err => of(err.error.msg))
+      );
   }
 }
